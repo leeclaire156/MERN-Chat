@@ -1,0 +1,17 @@
+starting steps:
+installed yarn globally
+created app with yarn create [vite](https://www.youtube.com/watch?v=89NJdbYTgJ8), setting project name to client, selecting React as framework, and Javascript as variant.
+changed directory into client and ran yarn in terminal
+
+running yarn dev in client directory runs the application locally.
+
+changed app.jsx to a single div with test as the text to test that it is updating as we make changes properly.
+
+change directory in client and ran `yarn add tailwindcss postcss autoprefixer` which *installs tailwindcss with postcss and autoprefixer* then ran `npx tailwindcss init -p` which created Tailwind CSS config file: tailwind.config.js and PostCSS config file: postcss.config.js
+
+Things I've learned
+* Tailwindcss - Tailwind CSS is a utility class library<sup>[[1]](https://youtu.be/ouncVBiye_M?t=229)</sup> that works by scanning all of your HTML files, JavaScript components, and any other templates for class names (kind of behaves like bootstrap with the class names but unlike bootstrap, which is a CSS framework, it doesn't have any pre-built components for you<sup>[[1]](https://youtu.be/ouncVBiye_M?t=229)</sup>), generating the corresponding styles and then writing them to a static CSS file.<sup>[[2]](https://tailwindcss.com/docs/installation/using-postcss)</sup> It'll also purge all unused css to an efficient bundle size. it's powerful but does need some configuration before starting.<sup>[[1]](https://youtu.be/ouncVBiye_M?t=229)</sup>
+* postcss - tailwind can be installed as a postCSS plugin which helps integrate it with build tools like webpack and Vite, postCSS is a preprocessor<sup>[[3]](https://tailwindcss.com/docs/using-with-preprocessors)</sup> so that the CSS will be compiled quicker by allowing you to parse/read a css file written in a different syntax and converting it into plain CSS. This makes writing CSS faster, easier, and more modular <sup>[[4]](https://www.google.com/search?q=is+postcss+like+sass&rlz=1C1RXQR_enUS1044US1044&oq=is+postcss+like+sass&aqs=chrome..69i57.3565j0j1&sourceid=chrome&ie=UTF-8)</sup><sup>[[5]](https://github.com/postcss/postcss)</sup>
+* autoprefixer - a postCSS plugin that parses CSS and add [vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor_Prefix) to CSS rules <sup>[[6]](https://github.com/postcss/autoprefixer)</sup>
+
+* [Making superscripts in markdown files](https://stackoverflow.com/questions/15155778/superscript-in-markdown-github-flavored) credit goes to [Michael Wild on Stack Overflow](https://stackoverflow.com/users/159834/michael-wild)
