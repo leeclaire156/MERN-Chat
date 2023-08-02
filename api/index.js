@@ -5,7 +5,11 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
+
 const jwtSecret = `${process.env.JWT_SECRET}`;
+// 10 rounds of salting
+const bcryptSalt = bcrypt.genSaltSync(10);
 
 dotenv.config();
 mongoose.connect(process.env.MONGODB_URL);
@@ -34,13 +38,21 @@ app.get('/profile', (req, res) => {
     }
 });
 
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const foundUser = await User.findOne({ username })
+});
+
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
-        const newUser = await User.create({ username, password });
+        const hashedPassword = bcrypt.hashSync(password, bcryptSalt)
+        const newUser = await User.create({ 
+            username:username, 
+            password:hashedPassword,});
         jwt.sign({ userId: newUser._id, username }, jwtSecret, {}, (err, token) => {
             if (err) throw err;
-            res.cookie('token', token, {sameSite:'none', secure:true}).status(201).json({
+            res.cookie('token', token, { sameSite: 'none', secure: true }).status(201).json({
                 id: newUser._id,
             });
         });
