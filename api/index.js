@@ -41,15 +41,26 @@ app.get('/profile', (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const foundUser = await User.findOne({ username })
+    if (foundUser) {
+        const match = bcrypt.compareSync(password, foundUser.password);
+        if (match) {
+            jwt.sign({ userId: foundUser._id, username }, jwtSecret, {}, (err, token) => {
+                res.cookie('token', token, { sameSite: 'none', secure: true }).status(201).json({
+                    id: foundUser._id,
+                });
+            })
+        }
+    }
 });
 
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
         const hashedPassword = bcrypt.hashSync(password, bcryptSalt)
-        const newUser = await User.create({ 
-            username:username, 
-            password:hashedPassword,});
+        const newUser = await User.create({
+            username: username,
+            password: hashedPassword,
+        });
         jwt.sign({ userId: newUser._id, username }, jwtSecret, {}, (err, token) => {
             if (err) throw err;
             res.cookie('token', token, { sameSite: 'none', secure: true }).status(201).json({
