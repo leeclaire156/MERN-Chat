@@ -73,4 +73,12 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.listen(4000);
+//Above is API server that responds with JSON, below is websocket server
+const ws = require('ws'); // websocket library
+const server = app.listen(4000);
+
+new wss = ws.WebSocketServer({ server }); //websocket server
+
+wss.on('connection', (connection) => {
+    console.log("connected");
+})
