@@ -77,7 +77,7 @@ app.post('/register', async (req, res) => {
 const ws = require('ws'); // websocket library
 const server = app.listen(4000);
 
-new wss = ws.WebSocketServer({ server }); //websocket server
+const wss = new ws.WebSocketServer({ server }); //websocket server
 
 wss.on('connection', (connection) => {
     console.log("connected");
