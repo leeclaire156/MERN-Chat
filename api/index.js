@@ -73,4 +73,28 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.listen(4000);
+//Above is API server that responds with JSON, below is websocket server
+const ws = require('ws'); // websocket library
+const server = app.listen(4000);
+
+const wss = new ws.WebSocketServer({ server }); //websocket server
+
+wss.on('connection', (connection, req) => {
+    const cookies = req.headers.cookie;
+    if (cookies) {
+        const tokenCookieString = cookies.split(';').find(str => str.startsWith('token='));
+        if (tokenCookieString) {
+            const token = tokenCookieString.split('=')[1];
+            if (token) {
+                jwt.verify(token, jwtSecret, {}, (err, userData) => {
+                    if (err) throw err;
+                    const { userId, username } = userData;
+                    connection.userId = userId;
+                    connection.username = username;
+                });
+            }
+        }
+    }
+
+    
+})

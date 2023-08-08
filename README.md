@@ -18,3 +18,5 @@ Things I've learned
 * [Making superscripts in markdown files](https://stackoverflow.com/questions/15155778/superscript-in-markdown-github-flavored) credit goes to [Michael Wild on Stack Overflow](https://stackoverflow.com/users/159834/michael-wild)
 
 * JWT Error: secretOrPrivateKey must have a value resolved by [Rabo Yusuf on Stack Overflow](https://stackoverflow.com/users/12221293/rabo-yusuf): <br></br> https://stackoverflow.com/questions/58673430/error-secretorprivatekey-must-have-a-value
+
+* Send message icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in paper-airplane in the search bar of heroicons
