@@ -81,4 +81,5 @@ const wss = new ws.WebSocketServer({ server }); //websocket server
 
 wss.on('connection', (connection) => {
     console.log("connected");
+    connection.send('Hi!');
 })

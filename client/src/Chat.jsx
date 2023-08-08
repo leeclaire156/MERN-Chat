@@ -1,9 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Chat() {
+    const [ws, setWs] = useState(null)
     useEffect(()=>{
-        new WebSocket('ws://localhost:4000')
+        const ws = new WebSocket('ws://localhost:4000');
+        setWs(ws);
+        ws.addEventListener('message', handleMessage)
     },[]);
+
+    function handleMessage(event){
+        console.log('new message', event)
+    }
 
     return (
         <div className="flex h-screen">
