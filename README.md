@@ -19,4 +19,6 @@ Things I've learned
 
 * JWT Error: secretOrPrivateKey must have a value resolved by [Rabo Yusuf on Stack Overflow](https://stackoverflow.com/users/12221293/rabo-yusuf): <br></br> https://stackoverflow.com/questions/58673430/error-secretorprivatekey-must-have-a-value
 
-* Send message icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in paper-airplane in the search bar of heroicons
+* Send message icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in "paper-airplane" in the search bar of heroicons
+
+* MERNChat icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in "chat" in the search bar of heroicons
