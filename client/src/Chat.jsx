@@ -44,15 +44,24 @@ export default function Chat() {
                 <Logo />
                 {Object.keys(onlinePeopleThatsNotUs).map(userId => (
                     <div onClick={() => setSelectedUserId(userId)} key={onlinePeople[userId]}
-                        className={"flex items-center gap-2 border-b border-gray-100 py-2 pl-4 cursor-pointer " + (userId === selectedUserId ? 'bg-blue-50' : '')}>
-                        <Avatar username={onlinePeople[userId]} userId={userId} />
-                        <span className="text-grey-800">{onlinePeople[userId]}</span>
+                        className={"flex items-center gap-2 border-b border-gray-100 cursor-pointer " + (userId === selectedUserId ? 'bg-blue-50' : '')}>
+                        {userId === selectedUserId && (
+                            <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
+                        )}
+                        <div className="flex gap-2 py-2 pl-4 items-center">
+                            <Avatar username={onlinePeople[userId]} userId={userId} />
+                            <span className="text-grey-800">{onlinePeople[userId]}</span>
+                        </div>
                     </div>
                 ))}
             </div>
             <div className="flex flex-col bg-blue-50 w-2/3 p-2">
                 <div className="flex-grow">
-                    Messages with selected person
+                    {!selectedUserId && (
+                        <div className="flex h-full items-center justify-center">
+                            <div className="text-gray-300">&larr; Select a conversation</div>
+                        </div>
+                    )}
                 </div>
                 <div className="flex gap-2">
                     <input type="text"
