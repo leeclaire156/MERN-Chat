@@ -7,6 +7,7 @@ export default function Chat() {
     const [ws, setWs] = useState(null);
     const [onlinePeople, setOnlinePeople] = useState({});
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [newMessageText, setNewMessageText] = useState("");
     const { username, id } = useContext(UserContext);
 
     useEffect(() => {
@@ -33,6 +34,16 @@ export default function Chat() {
         if ('online' in messageData) {
             showOnlinePeople(messageData.online);
         }
+    }
+
+    function sendMessage(event) {
+        event.preventDefault();
+        ws.send(JSON.stringify({
+            message: {
+                recipient: selectedUserId,
+                text: newMessageText,
+            }
+        }));
     }
 
     const onlinePeopleThatsNotUs = { ...onlinePeople };
@@ -63,16 +74,22 @@ export default function Chat() {
                         </div>
                     )}
                 </div>
-                <div className="flex gap-2">
-                    <input type="text"
-                        placeholder="Type your message here"
-                        className="bg-white flex-grow border rounded-sm p-2" />
-                    <button className="bg-blue-500 text-white rounded-sm p-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                        </svg>
-                    </button>
-                </div>
+                {/* !! returns boolean value, empty returns as false & not empty returns as true */}
+                {/* If there's no selected user/conversation, the message input form to send messages will not appear */}
+                {!!selectedUserId && (
+                    <form className="flex gap-2" onSubmit={sendMessage}>
+                        <input type="text"
+                            value={newMessageText}
+                            onChange={event => setNewMessageText(event.target.value)}
+                            placeholder="Type your message here"
+                            className="bg-white flex-grow border rounded-sm p-2" />
+                        <button type="submit" className="bg-blue-500 text-white rounded-sm p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                            </svg>
+                        </button>
+                    </form>
+                )}
             </div>
         </div>
     );
