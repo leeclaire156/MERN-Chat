@@ -8,6 +8,7 @@ export default function Chat() {
     const [onlinePeople, setOnlinePeople] = useState({});
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [newMessageText, setNewMessageText] = useState("");
+    const [messages, setMessages] = useState([]);
     const { username, id } = useContext(UserContext);
 
     useEffect(() => {
@@ -33,6 +34,8 @@ export default function Chat() {
         // If theres something in the online key of the messageData array, that means there's users that are online
         if ('online' in messageData) {
             showOnlinePeople(messageData.online);
+        } else {
+            console.log({ messageData })
         }
     }
 
@@ -44,6 +47,9 @@ export default function Chat() {
                 text: newMessageText,
             }
         }));
+        // Resets state to empty string after message is sent, thus clearing the message input from the form
+        setNewMessageText('');
+        setMessages(prevMessage => ([...prevMessage, { text: newMessageText, isOur: true }]));
     }
 
     const onlinePeopleThatsNotUs = { ...onlinePeople };
@@ -71,6 +77,13 @@ export default function Chat() {
                     {!selectedUserId && (
                         <div className="flex h-full items-center justify-center">
                             <div className="text-gray-300">&larr; Select a conversation</div>
+                        </div>
+                    )}
+                    {!!selectedUserId && (
+                        <div>
+                            {messages.map(message => (
+                                <div>{message.text}</div>
+                            ))}
                         </div>
                     )}
                 </div>
