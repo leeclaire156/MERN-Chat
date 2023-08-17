@@ -35,7 +35,8 @@ export default function Chat() {
         if ('online' in messageData) {
             showOnlinePeople(messageData.online);
         } else {
-            console.log({ messageData })
+            // isOur: false means it not our message but the other party's (incoming message)
+            setMessages(prevMessage => ([...prevMessage, { isOur: false, text: messageData.text }]));
         }
     }
 
@@ -49,6 +50,7 @@ export default function Chat() {
         }));
         // Resets state to empty string after message is sent, thus clearing the message input from the form
         setNewMessageText('');
+        // isOur: true means it our message (outgoing message)
         setMessages(prevMessage => ([...prevMessage, { text: newMessageText, isOur: true }]));
     }
 
@@ -82,7 +84,7 @@ export default function Chat() {
                     {!!selectedUserId && (
                         <div>
                             {messages.map(message => (
-                                <div>{message.text}</div>
+                                <div key={parseInt(message.text)}>{message.text}</div>
                             ))}
                         </div>
                     )}
