@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
+const Message = require('./models/Message');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
@@ -80,6 +81,7 @@ const server = app.listen(4000);
 const wss = new ws.WebSocketServer({ server }); //websocket server
 
 wss.on('connection', (connection, req) => {
+    // Reads username and id from the cookie for this connection
     const cookies = req.headers.cookie;
     if (cookies) {
         const tokenCookieString = cookies.split(';').find(str => str.startsWith('token='));
@@ -96,9 +98,36 @@ wss.on('connection', (connection, req) => {
         }
     }
 
+    connection.on("message", async (message) => {
+        // message is an object (coming from Chat.jsx with keys: recipient and text) so we must convert to string
+        const messageData = JSON.parse(message.toString());
+        const { recipient, text } = messageData;
+
+        if (recipient && text) {
+
+            // Stores message in MongoDB
+            const messageDoc = await Message.create({
+                sender: connection.userId,
+                recipient,
+                text,
+            });
+
+            // [...wss.clients].filter(client => client.userId === recipient) checks if the recipient is online
+            [...wss.clients]
+                .filter(client => client.userId === recipient)
+                .forEach(client => client.send(JSON.stringify({
+                    text,
+                    sender: connection.userId,
+                    recipient,
+                    id: messageDoc._id,
+                })));
+        }
+    });
+
+    // Notifies everyone about online users (when someone connects)
     [...wss.clients].forEach(client => {
         client.send(JSON.stringify({
-            online: [...wss.clients].map(client=>({userId:client.userId, username: client.username}))
+            online: [...wss.clients].map(client => ({ userId: client.userId, username: client.username }))
         }))
     })
 })
