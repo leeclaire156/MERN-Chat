@@ -58,6 +58,7 @@ export default function Chat() {
             text: newMessageText,
             sender: id,
             recipient: selectedUserId,
+            id: Date.now(),
         }]));
     }
 
@@ -92,14 +93,18 @@ export default function Chat() {
                         </div>
                     )}
                     {!!selectedUserId && (
-                        <div>
-                            {uniqueMessages.map(message => (
-                                <div key={parseInt(message.text)}>
-                                    sender:{message.sender}<br></br>
-                                    my id: {id}<br></br>
-                                    {message.text}
-                                </div>
-                            ))}
+                        <div className="relative">
+                            <div className="overflow-y-scroll absolute inset-0">
+                                {uniqueMessages.map(message => (
+                                    <div className={(message.sender === id ? "text-right" : "text-left")} key={parseInt(message.text)}>
+                                        <div className={"text-left inline-block p-2 my-2 rounded-md text-sm " + (message.sender === id ? 'bg-blue-500 text-white' : 'bg-white text-gray-500')}>
+                                            sender:{message.sender}<br></br>
+                                            my id: {id}<br></br>
+                                            {message.text}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -120,6 +125,6 @@ export default function Chat() {
                     </form>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
