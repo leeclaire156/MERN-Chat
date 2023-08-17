@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "./UserContext";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
+import { uniqBy } from 'lodash';
 
 export default function Chat() {
     const [ws, setWs] = useState(null);
@@ -17,26 +18,28 @@ export default function Chat() {
         ws.addEventListener('message', handleMessage)
     }, []);
 
+    // reduces the data of who is online to unique values only
+    // for each object (user) that is online, there is a new object whose key: value pair is the userId (key) and the username (value)
+    function showOnlinePeople(peopleArray) {
+        const people = {};
+        peopleArray.forEach(({ userId, username }) => {
+            people[userId] = username
+        })
+        setOnlinePeople(people);
+    }
+
     function handleMessage(event) {
         // returns object of who is online, will show duplicates as each refresh on the page is a new connection and will be added to the messageData
-        const messageData = JSON.parse(event.data)
+        const messageData = JSON.parse(event.data);
 
-        // reduces the data of who is online to unique values only
-        // for each object (user) that is online, there is a new object whose key: value pair is the userId (key) and the username (value)
-        function showOnlinePeople(peopleArray) {
-            const people = {};
-            peopleArray.forEach(({ userId, username }) => {
-                people[userId] = username
-            })
-            setOnlinePeople(people);
-        }
+        console.log({ event, messageData });
 
         // If theres something in the online key of the messageData array, that means there's users that are online
         if ('online' in messageData) {
             showOnlinePeople(messageData.online);
-        } else {
+        } else if ('text' in messageData) {
             // isOur: false means it not our message but the other party's (incoming message)
-            setMessages(prevMessage => ([...prevMessage, { isOur: false, text: messageData.text }]));
+            setMessages(prevMessage => ([...prevMessage, { ...messageData }]));
         }
     }
 
@@ -51,18 +54,25 @@ export default function Chat() {
         // Resets state to empty string after message is sent, thus clearing the message input from the form
         setNewMessageText('');
         // isOur: true means it our message (outgoing message)
-        setMessages(prevMessage => ([...prevMessage, { text: newMessageText, isOur: true }]));
+        setMessages(prevMessage => ([...prevMessage, {
+            text: newMessageText,
+            sender: id,
+            recipient: selectedUserId,
+        }]));
     }
 
     const onlinePeopleThatsNotUs = { ...onlinePeople };
     delete onlinePeopleThatsNotUs[id];
+
+    // Prevents duplicate messages
+    const uniqueMessages = uniqBy(messages, 'id');
 
     return (
         <div className="flex h-screen">
             <div className="bg-white w-1/3">
                 <Logo />
                 {Object.keys(onlinePeopleThatsNotUs).map(userId => (
-                    <div onClick={() => setSelectedUserId(userId)} key={onlinePeople[userId]}
+                    <div onClick={() => { setSelectedUserId(userId); console.log(selectedUserId) }} key={userId}
                         className={"flex items-center gap-2 border-b border-gray-100 cursor-pointer " + (userId === selectedUserId ? 'bg-blue-50' : '')}>
                         {userId === selectedUserId && (
                             <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
@@ -83,8 +93,12 @@ export default function Chat() {
                     )}
                     {!!selectedUserId && (
                         <div>
-                            {messages.map(message => (
-                                <div key={parseInt(message.text)}>{message.text}</div>
+                            {uniqueMessages.map(message => (
+                                <div key={parseInt(message.text)}>
+                                    sender:{message.sender}<br></br>
+                                    my id: {id}<br></br>
+                                    {message.text}
+                                </div>
                             ))}
                         </div>
                     )}

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
+const Message = require('./models/Message');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
@@ -97,15 +98,29 @@ wss.on('connection', (connection, req) => {
         }
     }
 
-    connection.on("message", (message) => {
+    connection.on("message", async (message) => {
         // message is an object (coming from Chat.jsx with keys: recipient and text) so we must convert to string
         const messageData = JSON.parse(message.toString());
-        const {recipient, text} = messageData;
-        if(recipient && text){
+        const { recipient, text } = messageData;
+
+        if (recipient && text) {
+
+            // Stores message in MongoDB
+            const messageDoc = await Message.create({
+                sender: connection.userId,
+                recipient,
+                text,
+            });
+
             // [...wss.clients].filter(client => client.userId === recipient) checks if the recipient is online
             [...wss.clients]
                 .filter(client => client.userId === recipient)
-                .forEach(client => client.send(JSON.stringify({text})));
+                .forEach(client => client.send(JSON.stringify({
+                    text,
+                    sender: connection.userId,
+                    recipient,
+                    id: messageDoc._id,
+                })));
         }
     });
 
