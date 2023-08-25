@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "./UserContext";
+import { UserContext } from "./UserContext.jsx";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
 import { uniqBy } from 'lodash';
@@ -46,10 +46,8 @@ export default function Chat() {
     function sendMessage(event) {
         event.preventDefault();
         ws.send(JSON.stringify({
-            message: {
-                recipient: selectedUserId,
-                text: newMessageText,
-            }
+            recipient: selectedUserId,
+            text: newMessageText,
         }));
         // Resets state to empty string after message is sent, thus clearing the message input from the form
         setNewMessageText('');
@@ -73,7 +71,7 @@ export default function Chat() {
             <div className="bg-white w-1/3">
                 <Logo />
                 {Object.keys(onlinePeopleThatsNotUs).map(userId => (
-                    <div onClick={() => { setSelectedUserId(userId); console.log(selectedUserId) }} key={userId}
+                    <div onClick={() => { setSelectedUserId(userId); console.log(userId) }} key={userId}
                         className={"flex items-center gap-2 border-b border-gray-100 cursor-pointer " + (userId === selectedUserId ? 'bg-blue-50' : '')}>
                         {userId === selectedUserId && (
                             <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
@@ -88,15 +86,15 @@ export default function Chat() {
             <div className="flex flex-col bg-blue-50 w-2/3 p-2">
                 <div className="flex-grow">
                     {!selectedUserId && (
-                        <div className="flex h-full items-center justify-center">
+                        <div className="flex h-full flex-grow items-center justify-center">
                             <div className="text-gray-300">&larr; Select a conversation</div>
                         </div>
                     )}
                     {!!selectedUserId && (
-                        <div className="relative">
+                        <div className="relative h-full">
                             <div className="overflow-y-scroll absolute inset-0">
                                 {uniqueMessages.map(message => (
-                                    <div className={(message.sender === id ? "text-right" : "text-left")} key={parseInt(message.text)}>
+                                    <div key={message.id} className={(message.sender === id ? "text-right" : "text-left")}>
                                         <div className={"text-left inline-block p-2 my-2 rounded-md text-sm " + (message.sender === id ? 'bg-blue-500 text-white' : 'bg-white text-gray-500')}>
                                             sender:{message.sender}<br></br>
                                             my id: {id}<br></br>
