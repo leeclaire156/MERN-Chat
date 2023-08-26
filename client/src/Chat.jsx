@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "./UserContext.jsx";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
@@ -11,6 +11,8 @@ export default function Chat() {
     const [newMessageText, setNewMessageText] = useState("");
     const [messages, setMessages] = useState([]);
     const { username, id } = useContext(UserContext);
+    // used to create references which we will attach to the div under our array of chat messages
+    const divUnderMessages = useRef();
 
     useEffect(() => {
         const ws = new WebSocket('ws://localhost:4000');
@@ -60,6 +62,18 @@ export default function Chat() {
         }]));
     }
 
+    // This effect occurs when *messages* changes (assigned via the [] brackets)
+    useEffect(() => {
+        //When a ref is passed to an element in render, a reference to the node becomes accessible at the current attribute of the ref.
+        //https://legacy.reactjs.org/docs/refs-and-the-dom.html
+        const div = divUnderMessages.current;
+        // If div exists, which it will after we select a user, the chat will scroll to the bottom smoothly to the end of the block
+        // This is what allows us to auto scroll to the bottom of the chat when sending messages
+        if (div) {
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }, [messages])
+
     const onlinePeopleThatsNotUs = { ...onlinePeople };
     delete onlinePeopleThatsNotUs[id];
 
@@ -85,14 +99,18 @@ export default function Chat() {
             </div>
             <div className="flex flex-col bg-blue-50 w-2/3 p-2">
                 <div className="flex-grow">
+                    {/*  Code below appears if theres no selected user */}
                     {!selectedUserId && (
                         <div className="flex h-full flex-grow items-center justify-center">
                             <div className="text-gray-300">&larr; Select a conversation</div>
                         </div>
                     )}
+
+                    {/* !! returns boolean value, empty returns as false & not empty returns as true */}
+                    {/* Code below appears if there is a selected user */}
                     {!!selectedUserId && (
                         <div className="relative h-full">
-                            <div className="overflow-y-scroll absolute inset-0">
+                            <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
                                 {uniqueMessages.map(message => (
                                     <div key={message.id} className={(message.sender === id ? "text-right" : "text-left")}>
                                         <div className={"text-left inline-block p-2 my-2 rounded-md text-sm " + (message.sender === id ? 'bg-blue-500 text-white' : 'bg-white text-gray-500')}>
@@ -102,12 +120,14 @@ export default function Chat() {
                                         </div>
                                     </div>
                                 ))}
+                                <div ref={divUnderMessages}></div>
                             </div>
                         </div>
                     )}
                 </div>
-                {/* !! returns boolean value, empty returns as false & not empty returns as true */}
+
                 {/* If there's no selected user/conversation, the message input form to send messages will not appear */}
+                {/*  Code below appears if there is a selected user */}
                 {!!selectedUserId && (
                     <form className="flex gap-2" onSubmit={sendMessage}>
                         <input type="text"
