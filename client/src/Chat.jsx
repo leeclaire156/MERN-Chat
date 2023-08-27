@@ -3,6 +3,7 @@ import { UserContext } from "./UserContext.jsx";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
 import { uniqBy } from 'lodash';
+import axios from "axios";
 
 export default function Chat() {
     const [ws, setWs] = useState(null);
@@ -73,6 +74,13 @@ export default function Chat() {
             div.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
     }, [messages])
+
+    // This effect occurs when there's a change to the selectedUserId and if the value isn't null (default upon load because no conversation is selected)
+    useEffect(() => {
+        if (selectedUserId) {
+            axios.get('/messages/' + selectedUserId)
+        }
+    }, [selectedUserId])
 
     const onlinePeopleThatsNotUs = { ...onlinePeople };
     delete onlinePeopleThatsNotUs[id];
