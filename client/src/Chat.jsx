@@ -3,6 +3,7 @@ import { UserContext } from "./UserContext.jsx";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
 import { uniqBy } from 'lodash';
+import axios from "axios";
 
 export default function Chat() {
     const [ws, setWs] = useState(null);
@@ -15,10 +16,20 @@ export default function Chat() {
     const divUnderMessages = useRef();
 
     useEffect(() => {
+        connectToWS()
+    }, []);
+
+    function connectToWS() {
         const ws = new WebSocket('ws://localhost:4000');
         setWs(ws);
-        ws.addEventListener('message', handleMessage)
-    }, []);
+        ws.addEventListener('message', handleMessage);
+        ws.addEventListener('close', () => {
+            setTimeout(() => {
+                console.log('Disconnected. Trying to reconnect.');
+                connectToWS();
+            }, 1000)
+        });
+    }
 
     // reduces the data of who is online to unique values only
     // for each object (user) that is online, there is a new object whose key: value pair is the userId (key) and the username (value)
@@ -40,7 +51,6 @@ export default function Chat() {
         if ('online' in messageData) {
             showOnlinePeople(messageData.online);
         } else if ('text' in messageData) {
-            // isOur: false means it not our message but the other party's (incoming message)
             setMessages(prevMessage => ([...prevMessage, { ...messageData }]));
         }
     }
@@ -53,12 +63,11 @@ export default function Chat() {
         }));
         // Resets state to empty string after message is sent, thus clearing the message input from the form
         setNewMessageText('');
-        // isOur: true means it our message (outgoing message)
         setMessages(prevMessage => ([...prevMessage, {
             text: newMessageText,
             sender: id,
             recipient: selectedUserId,
-            id: Date.now(),
+            _id: Date.now(),
         }]));
     }
 
@@ -74,11 +83,20 @@ export default function Chat() {
         }
     }, [messages])
 
+    // This effect occurs when there's a change to the selectedUserId and if the value isn't null (default upon load because no conversation is selected)
+    useEffect(() => {
+        if (selectedUserId) {
+            axios.get('/messages/' + selectedUserId).then(res => {
+                setMessages(res.data);
+            })
+        }
+    }, [selectedUserId])
+
     const onlinePeopleThatsNotUs = { ...onlinePeople };
     delete onlinePeopleThatsNotUs[id];
 
     // Prevents duplicate messages
-    const uniqueMessages = uniqBy(messages, 'id');
+    const uniqueMessages = uniqBy(messages, '_id');
 
     return (
         <div className="flex h-screen">
@@ -112,10 +130,8 @@ export default function Chat() {
                         <div className="relative h-full">
                             <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
                                 {uniqueMessages.map(message => (
-                                    <div key={message.id} className={(message.sender === id ? "text-right" : "text-left")}>
+                                    <div key={message._id} className={(message.sender === id ? "text-right" : "text-left")}>
                                         <div className={"text-left inline-block p-2 my-2 rounded-md text-sm " + (message.sender === id ? 'bg-blue-500 text-white' : 'bg-white text-gray-500')}>
-                                            sender:{message.sender}<br></br>
-                                            my id: {id}<br></br>
                                             {message.text}
                                         </div>
                                     </div>
