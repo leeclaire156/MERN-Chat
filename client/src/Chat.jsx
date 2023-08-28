@@ -16,10 +16,15 @@ export default function Chat() {
     const divUnderMessages = useRef();
 
     useEffect(() => {
+        connectToWS()
+    }, []);
+
+    function connectToWS() {
         const ws = new WebSocket('ws://localhost:4000');
         setWs(ws);
-        ws.addEventListener('message', handleMessage)
-    }, []);
+        ws.addEventListener('message', handleMessage);
+        ws.addEventListener('close', () => connectToWS());
+    }
 
     // reduces the data of who is online to unique values only
     // for each object (user) that is online, there is a new object whose key: value pair is the userId (key) and the username (value)
