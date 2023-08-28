@@ -15,6 +15,9 @@ Things I've learned
 * postcss - tailwind can be installed as a postCSS plugin which helps integrate it with build tools like webpack and Vite, postCSS is a preprocessor<sup>[[4]](https://tailwindcss.com/docs/using-with-preprocessors)</sup> so that the CSS will be compiled quicker by allowing you to parse/read a css file written in a different syntax and converting it into plain CSS. This makes writing CSS faster, easier, and more modular <sup>[[5]](https://www.google.com/search?q=is+postcss+like+sass&rlz=1C1RXQR_enUS1044US1044&oq=is+postcss+like+sass&aqs=chrome..69i57.3565j0j1&sourceid=chrome&ie=UTF-8)</sup><sup>[[6]](https://github.com/postcss/postcss)</sup>
 * autoprefixer - a postCSS plugin that parses CSS and add [vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor_Prefix) to CSS rules <sup>[[7]](https://github.com/postcss/autoprefixer)</sup>
 
+**Heartbeat refresh: https://www.reddit.com/r/reactjs/comments/erbwyq/best_practices_for_a_heartbeat_refresh/**
+
+
 * [Making superscripts in markdown files](https://stackoverflow.com/questions/15155778/superscript-in-markdown-github-flavored) credit goes to [Michael Wild on Stack Overflow](https://stackoverflow.com/users/159834/michael-wild)
 
 * JWT Error: secretOrPrivateKey must have a value resolved by [Rabo Yusuf on Stack Overflow](https://stackoverflow.com/users/12221293/rabo-yusuf): <br></br> https://stackoverflow.com/questions/58673430/error-secretorprivatekey-must-have-a-value
