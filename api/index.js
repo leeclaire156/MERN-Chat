@@ -55,6 +55,13 @@ app.get('/messages/:userId', async (req, res) => {
     res.json(messages);
 });
 
+app.get('/people', async (req, res) => {
+    //first curly brackets {} is conditions, which we have none
+    //second curly brackets {'_id': 1, username: 1} is what we want to select, where _id and username is true (denoted by 1)
+    const users = await User.find({}, { '_id': 1, username: 1 });
+    res.json(users);
+});
+
 app.get('/profile', (req, res) => {
     const token = req.cookies?.token;
     if (token) {

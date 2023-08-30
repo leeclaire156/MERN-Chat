@@ -8,6 +8,7 @@ import axios from "axios";
 export default function Chat() {
     const [ws, setWs] = useState(null);
     const [onlinePeople, setOnlinePeople] = useState({});
+    const [offlinePeople, setOfflinePeople] = useState({});
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [newMessageText, setNewMessageText] = useState("");
     const [messages, setMessages] = useState([]);
@@ -91,6 +92,22 @@ export default function Chat() {
             })
         }
     }, [selectedUserId])
+
+
+    // Occurs when onlinePeople changes which happens when we open the app
+    useEffect(() => {
+        //axios.get('/people') gets all people bc in index.js we use User.find() method
+        axios.get('/people').then(res => {
+            const offlinePeopleArray = res.data
+                .filter(person => person._id !== id) // Find people that ain't us (filter method)
+                .filter(person => !Object.keys(onlinePeople).includes(person._id)) // Find people that ain't online (filter method)
+            const offlinePeople = {};
+            offlinePeopleArray.forEach(person => {
+                offlinePeople[person._id] = person;
+            })
+            setOfflinePeople(offlinePeople);
+        });
+    }, [onlinePeople])
 
     const onlinePeopleThatsNotUs = { ...onlinePeople };
     delete onlinePeopleThatsNotUs[id];

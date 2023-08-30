@@ -11,7 +11,8 @@ export default function Avatar({ userId, username, online }) {
         <div className={"flex items-center relative w-8 h-8 rounded-full " + avatarColor}>
             <div className="text-center w-full opacity-70">{username[0]}</div>
             {/* if user is online (online = true passed from Chat.jsx), then will display green icon */}
-            {online && (<div className="absolute w-3 h-3 bg-green-400 bottom-0 right-0 rounded-full border border-white"></div>
+            {online && (
+                <div className="absolute w-3 h-3 bg-green-400 bottom-0 right-0 rounded-full border border-white"></div>
             )}
         </div>
     );
