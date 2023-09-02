@@ -4,6 +4,7 @@ import Avatar from "./Avatar";
 import Logo from "./Logo";
 import { uniqBy } from 'lodash';
 import axios from "axios";
+import Contact from "./Contacts.jsx";
 
 export default function Chat() {
     const [ws, setWs] = useState(null);
@@ -93,7 +94,6 @@ export default function Chat() {
         }
     }, [selectedUserId])
 
-
     // Occurs when onlinePeople changes which happens when we open the app
     useEffect(() => {
         //axios.get('/people') gets all people bc in index.js we use User.find() method
@@ -120,16 +120,24 @@ export default function Chat() {
             <div className="bg-white w-1/3">
                 <Logo />
                 {Object.keys(onlinePeopleThatsNotUs).map(userId => (
-                    <div onClick={() => { setSelectedUserId(userId); console.log(userId) }} key={userId}
-                        className={"flex items-center gap-2 border-b border-gray-100 cursor-pointer " + (userId === selectedUserId ? 'bg-blue-50' : '')}>
-                        {userId === selectedUserId && (
-                            <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
-                        )}
-                        <div className="flex gap-2 py-2 pl-4 items-center">
-                            <Avatar online={true} username={onlinePeople[userId]} userId={userId} />
-                            <span className="text-grey-800">{onlinePeople[userId]}</span>
-                        </div>
-                    </div>
+                    <Contact 
+                    key = {userId}
+                    id = {userId} 
+                    online = {true}
+                    username = {onlinePeopleThatsNotUs[userId]}
+                    onClick={()=>{setSelectedUserId(userId)}}
+                    selected = {userId === selectedUserId}
+                    />
+                ))}
+                {Object.keys(offlinePeople).map(userId => (
+                    <Contact 
+                    key = {userId}
+                    id = {userId} 
+                    online = {false}
+                    username = {offlinePeople[userId].username}
+                    onClick={()=>{setSelectedUserId(userId)}}
+                    selected = {userId === selectedUserId}
+                    />
                 ))}
             </div>
             <div className="flex flex-col bg-blue-50 w-2/3 p-2">
