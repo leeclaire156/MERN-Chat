@@ -93,6 +93,7 @@ app.post('/logout', (req, res) => {
     // resetting the cookie by passing an empty 2nd parameter
     res.cookie('token', '', { sameSite: 'none', secure: true }).status(201).json('logged out');
 });
+
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -139,6 +140,8 @@ wss.on('connection', (connection, req) => {
         // this function inside will set isAlive to false, and terminate the connection, then notify with new list of online people after someone goes offline
         connection.deathTimer = setTimeout(() => {
             connection.isAlive = false;
+            // Stops trying to ping even after logging out of session
+            clearInterval(connection.timer);
             connection.terminate();
             notifyAboutOnlinePeople();
             console.log('dead');
