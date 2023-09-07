@@ -89,6 +89,10 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.post('/logout', (req, res) => {
+    // resetting the cookie by passing an empty 2nd parameter
+    res.cookie('token', '', { sameSite: 'none', secure: true }).status(201).json('logged out');
+});
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
