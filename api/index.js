@@ -116,6 +116,38 @@ const server = app.listen(4000);
 const wss = new ws.WebSocketServer({ server }); //websocket server
 
 wss.on('connection', (connection, req) => {
+    function notifyAboutOnlinePeople() {
+        // Notifies everyone about online users (when someone connects)
+        [...wss.clients].forEach(client => {
+            client.send(JSON.stringify({
+                online: [...wss.clients].map(client => ({ userId: client.userId, username: client.username }))
+            }))
+        })
+    }
+
+    //after connecting, we are going to add a ping
+    connection.isAlive = true;
+
+    // setInterval runs the function inside every 5 seconds, in this case, we are sending pings to our connection every 5s
+    connection.timer = setInterval(() => {
+        connection.ping();
+        // setTimeout will run the function inside 1 second after pinging and will occur if we do not get a pong
+        // this function inside will set isAlive to false, and terminate the connection, then notify with new list of online people after someone goes offline
+        connection.deathTimer = setTimeout(() => {
+            connection.isAlive = false;
+            connection.terminate();
+            notifyAboutOnlinePeople();
+            console.log('dead');
+        }, 1000)
+    }, 5000)
+
+    //pong to our ping
+    //will cancel the deathTimer(?)
+    connection.on('pong', () => {
+        clearTimeout(connection.deathTimer);
+    })
+
+
     // Reads username and id from the cookie for this connection
     const cookies = req.headers.cookie;
     if (cookies) {
@@ -159,10 +191,9 @@ wss.on('connection', (connection, req) => {
         }
     });
 
-    // Notifies everyone about online users (when someone connects)
-    [...wss.clients].forEach(client => {
-        client.send(JSON.stringify({
-            online: [...wss.clients].map(client => ({ userId: client.userId, username: client.username }))
-        }))
-    })
+    notifyAboutOnlinePeople();
+})
+
+wss.on('close', data => {
+    console.log('disconnected', data);
 })
