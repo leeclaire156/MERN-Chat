@@ -65,11 +65,15 @@ export default function Chat() {
         });
     }
 
-    function sendMessage(event) {
-        event.preventDefault();
+    // file = null is a default, but will be overwritten by sendFile function if there is a file
+    function sendMessage(event, file = null) {
+        if (event) {
+            event.preventDefault();
+        }
         ws.send(JSON.stringify({
             recipient: selectedUserId,
             text: newMessageText,
+            file,
         }));
         // Resets state to empty string after message is sent, thus clearing the message input from the form
         setNewMessageText('');
@@ -79,6 +83,21 @@ export default function Chat() {
             recipient: selectedUserId,
             _id: Date.now(),
         }]));
+    }
+
+    function sendFile(event) {
+        const reader = new FileReader();
+        //readAsDataURL converts data into based64 data
+        reader.readAsDataURL(event.target.files[0]);
+        //onload is a function that is run after we've read the data
+        reader.onload = () => {
+            // null is first parameter because we're not passing in an event
+            // but! we are going to pass the base 64 file as 2nd parameter (object)
+            sendMessage(null, {
+                name: event.target.files[0].name,
+                data: reader.result,
+            })
+        }
     }
 
     // This effect occurs when *messages* changes (assigned via the [] brackets)
