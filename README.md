@@ -25,3 +25,7 @@ Things I've learned
 * Send message icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in "paper-airplane" in the search bar of heroicons
 
 * MERNChat icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in "chat" in the search bar of heroicons
+
+* User icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in "user" in the search bar of heroicons and pick solid icons
+
+* File icon on Chat.jsx page from [heroicons](https://heroicons.com/): To find, type in "paper-clip" in the search bar of heroicons
