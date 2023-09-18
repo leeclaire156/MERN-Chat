@@ -7,6 +7,7 @@ const Message = require('./models/Message');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
+const fs = require('fs')
 
 const jwtSecret = `${process.env.JWT_SECRET}`;
 // 10 rounds of salting
@@ -175,8 +176,25 @@ wss.on('connection', (connection, req) => {
     connection.on("message", async (message) => {
         // message is an object (coming from Chat.jsx with keys: recipient and text) so we must convert to string
         const messageData = JSON.parse(message.toString());
-        const { recipient, text } = messageData;
+        const { recipient, text, file } = messageData;
+        if (file) {
+            var parts = file.name.split('.');
 
+            //obtains file type (png, pdf, jpeg, etc)
+            const extension = parts[parts.length - 1];
+            //filename will not be what it is originally named on the local pc but is, instead, given a new name
+            const filename = Date.now() + '.' + extension;
+            //sends files to /upload folder in /api folder (current directory, aka __dirname)
+            const pathname = __dirname + '/uploads/' + filename;
+
+            // need to read contents of data from file.data in sendFile function of Chat.jsx
+            // bc data is based64 encoded, we need to decode it
+            // The buffers module provides a way of handling streams of binary data.
+            const bufferData = new Buffer.from(file.data, 'base64');
+            fs.writeFile(pathname, bufferData, () => {
+                console.log('file saved:' + pathname)
+            });
+        }
         if (recipient && text) {
 
             // Stores message in MongoDB
