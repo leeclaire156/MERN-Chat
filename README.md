@@ -17,6 +17,8 @@ Things I've learned
 
 **Heartbeat refresh: https://www.reddit.com/r/reactjs/comments/erbwyq/best_practices_for_a_heartbeat_refresh/**
 
+* Buffers: https://www.youtube.com/watch?v=4YRUyrbusvM
+* Buffer.from: https://nodejs.org/api/buffer.html#static-method-bufferfrombuffer
 
 * [Making superscripts in markdown files](https://stackoverflow.com/questions/15155778/superscript-in-markdown-github-flavored) credit goes to [Michael Wild on Stack Overflow](https://stackoverflow.com/users/159834/michael-wild)
 

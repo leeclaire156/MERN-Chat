@@ -190,6 +190,9 @@ wss.on('connection', (connection, req) => {
             // need to read contents of data from file.data in sendFile function of Chat.jsx
             // bc data is based64 encoded, we need to decode it
             // The buffers module provides a way of handling streams of binary data.
+            // Creates a new Buffer containing string (file.data). 
+            // The encoding parameter ('base64') identifies the character encoding to be used when converting string into bytes.
+            // Base64 is a binary to a text encoding scheme that represents binary data in an American Standard Code for Information Interchange (ASCII) string format.
             const bufferData = new Buffer.from(file.data, 'base64');
             fs.writeFile(pathname, bufferData, () => {
                 console.log('file saved:' + pathname)
